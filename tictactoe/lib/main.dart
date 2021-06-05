@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:tictactoe/game_button.dart';
 import './switchScreen.dart';
+import 'ScoreKeeper.dart';
 
 void main() {
   runApp(MyApp());
@@ -38,6 +39,8 @@ class _MyHomePageState extends State<MyHomePage> {
   List<int> player1 = <int>[];
   List<int> player2 = <int>[];
   List<int> remaining = <int>[];
+  int p1=0;
+  int p2=0;
 
   bool gameOver = false;
   bool autoGame = false;
@@ -96,12 +99,20 @@ class _MyHomePageState extends State<MyHomePage> {
         if (a != -1) {
           setState(() {
             gameOver = true;
+            if(a==1){
+              p1=p1+1;
+            }
+            else if(a==2){
+              p2=p2+1;
+            }
           });
+          print("${p1} ${p2}");
           if (a == 3) {
             showEndDialog("Its a Tie");
           } else {
             showEndDialog("Player " + a.toString() + " Wins!");
           }
+          
         } else {
           autoPlay();
         }
@@ -178,7 +189,6 @@ class _MyHomePageState extends State<MyHomePage> {
         bool foundPlace = false;
         int num2 = autoPlaySecondPlayer();
         int num1 = autoPlayFirstPlayer();
-        print("ll ${num1} ${num2}");
         if (num2 != 0) {
           i = num2-1;
           foundPlace = true;
@@ -194,7 +204,6 @@ class _MyHomePageState extends State<MyHomePage> {
           var cellID = remaining[randIndex];
           i = buttonsList.indexWhere((p) => p.id == cellID);
         }
-        print("${i} kdnd");
 
         playGame(buttonsList[i]);
       });
@@ -334,7 +343,9 @@ class _MyHomePageState extends State<MyHomePage> {
             SwitchScreen(
               callback: parentFunction,
             ),
-            SizedBox(height: 100),
+            ScoreKeeper(pl1:p1,pl2:p2),
+            SizedBox(height: 20),
+
             new Expanded(
               child: new GridView.builder(
                 padding: const EdgeInsets.all(10.0),
@@ -345,8 +356,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisSpacing: 9.0),
                 itemCount: buttonsList.length,
                 itemBuilder: (context, i) => new SizedBox(
-                  width: 100.0,
-                  height: 100.0,
+                  width: 90.0,
+                  height: 90.0,
                   child: new RaisedButton(
                     padding: EdgeInsets.all(8),
                     color: buttonsList[i].bg,
@@ -362,7 +373,26 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            new ElevatedButton(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+              new ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: Colors.blue,
+                padding: EdgeInsets.all(20),
+              ),
+              child: new Text(
+                "Complete Reset",
+                style: new TextStyle(color: Colors.white, fontSize: 15.0),
+              ),
+              onPressed: () {
+                setState(() {
+                  p1=0;
+                  p2=0;
+                });
+                resetGame();
+              },
+            ),new ElevatedButton(
               style: ElevatedButton.styleFrom(
                 primary: Colors.green,
                 padding: EdgeInsets.all(20),
@@ -375,6 +405,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 resetGame();
               },
             )
+            ],)
+            
           ],
         ));
   }
